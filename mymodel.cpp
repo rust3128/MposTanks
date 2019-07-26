@@ -1,6 +1,7 @@
 #include "mymodel.h"
 #include <QColor>
 #include <QString>
+#include <QDateTime>
 
 MyModel::MyModel()
 {
@@ -19,6 +20,7 @@ QVariant MyModel::data(const QModelIndex &index, int role) const
     }
 
     if(role == Qt::DisplayRole){
+        if(column == 1) return QSortFilterProxyModel::data(index,Qt::DisplayRole).toDateTime().toString("dd.MM.yyyy hh:mm:ss");
         if(column >=4 ){
             return QString::number(QSortFilterProxyModel::data(index,Qt::DisplayRole).toDouble(),'f',2);
         }
