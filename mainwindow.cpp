@@ -252,7 +252,8 @@ void MainWindow::on_toolButtonExcel_clicked()
 
     QString fn = QDir::currentPath() + "//" + "Tanks"+QDateTime::currentDateTime().toString("yyyyMMddhhmm")+".xlsx";
     xlsx.saveAs(fn); // save the document as 'Test.xlsx'
-    QDesktopServices::openUrl(QUrl("file://"+fn, QUrl::TolerantMode));
+    qInfo (logInfo()) << "Path xls" << fn;
+    QDesktopServices::openUrl(QUrl("file:///"+fn, QUrl::TolerantMode));
 
 
 
