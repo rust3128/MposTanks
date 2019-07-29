@@ -159,16 +159,40 @@ void MainWindow::printPreviewNeeds(QPrinter *)
 void MainWindow::on_toolButtonExcel_clicked()
 {
     QXlsx::Document xlsx;
-    Format formatTitle, formatFuelsAZS, formatFuelSklad;
+    Format formatTitleBlue, formatTitleRed, formatTitle, formatFuelsAZS, formatFuelSklad, formatFuelItogo,formatCommon;
+
+    formatCommon.setBorderStyle(Format::BorderThin);
 
     formatTitle.setHorizontalAlignment(Format::AlignHCenter);
     formatTitle.setVerticalAlignment(Format::AlignVCenter);
     formatTitle.setFontBold(true);
+    formatTitle.setBorderStyle(Format::BorderThin);
+
+    formatTitleBlue.setHorizontalAlignment(Format::AlignHCenter);
+    formatTitleBlue.setVerticalAlignment(Format::AlignVCenter);
+    formatTitleBlue.setFontBold(true);
+    formatTitleBlue.setPatternBackgroundColor(QColor("#A9BCF5"));
+    formatTitleBlue.setBorderStyle(Format::BorderThin);
+
+    formatTitleRed.setHorizontalAlignment(Format::AlignHCenter);
+    formatTitleRed.setVerticalAlignment(Format::AlignVCenter);
+    formatTitleRed.setFontBold(true);
+    formatTitleRed.setPatternBackgroundColor(QColor("#F78181"));
+    formatTitleRed.setBorderStyle(Format::BorderThin);
+
 
     formatFuelsAZS.setPatternBackgroundColor(QColor("#A9BCF5"));
     formatFuelsAZS.setNumberFormatIndex(2);
+    formatFuelsAZS.setBorderStyle(Format::BorderThin);
+
     formatFuelSklad.setPatternBackgroundColor(QColor("#F78181"));
     formatFuelSklad.setNumberFormatIndex(2);
+    formatFuelSklad.setBorderStyle(Format::BorderThin);
+
+
+    formatFuelItogo.setPatternBackgroundColor(QColor("#3ADF00"));
+    formatFuelItogo.setNumberFormatIndex(2);
+    formatFuelItogo.setBorderStyle(Format::BorderThin);
 
 
 
@@ -186,14 +210,19 @@ void MainWindow::on_toolButtonExcel_clicked()
             xlsx.mergeCells(CellRange(1,i,2,i));
             continue;
         }
-        if(i >= 5 && i <= 13) {
-            xlsx.write(2,i, headers.at(i-1),formatTitle);
+        if(i >= 5 && i <= 8) {
+            xlsx.write(2,i, headers.at(i-1),formatTitleBlue);
+            continue;
+        }
+        if(i >= 9 && i <= 13) {
+            xlsx.write(2,i, headers.at(i-1),formatTitleRed);
+            continue;
         }
     }
     xlsx.mergeCells("E1:H1");
-    xlsx.write("E1","АЗС",formatTitle);
+    xlsx.write("E1","АЗС",formatTitleBlue);
     xlsx.mergeCells("I1:M1");
-    xlsx.write("I1","СКЛАД",formatTitle);
+    xlsx.write("I1","СКЛАД",formatTitleRed);
 
     for(int row = 3; row < rowCount; ++row){
         for(int col =1; col<columnCount; ++col){
@@ -206,18 +235,19 @@ void MainWindow::on_toolButtonExcel_clicked()
                 continue;
             }
             if(col == 2){
-                xlsx.write(row,col, model->data(model->index(row-3,col-1),Qt::DisplayRole).toDateTime().toString("dd.MM.yyyy hh:mm:ss"));
+                xlsx.write(row,col, model->data(model->index(row-3,col-1),Qt::DisplayRole).toDateTime().toString("dd.MM.yyyy hh:mm:ss"),formatCommon);
                 continue;
             }
             if(col == 14){
-                xlsx.write(row,col, model->data(model->index(row-3,col-1),Qt::DisplayRole).toFloat());
+                xlsx.write(row,col, model->data(model->index(row-3,col-1),Qt::DisplayRole).toFloat(),formatFuelItogo);
                 continue;
             }
-            xlsx.write(row,col, model->data(model->index(row-3,col-1),Qt::DisplayRole).toString());
+            xlsx.write(row,col, model->data(model->index(row-3,col-1),Qt::DisplayRole).toString(),formatCommon);
         }
     }
 
-
+    xlsx.setColumnWidth(5,14,10);
+    xlsx.setColumnWidth(2,3,20);
 
 
     QString fn = QDir::currentPath() + "//" + "Tanks"+QDateTime::currentDateTime().toString("yyyyMMddhhmm")+".xlsx";
