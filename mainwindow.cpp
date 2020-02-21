@@ -71,7 +71,7 @@ void MainWindow::createUI()
 void MainWindow::createModel()
 {
     model = new QSqlQueryModel();
-    model->setQuery("SELECT * FROM P1C_GET_FUELS_REST");
+    model->setQuery("SELECT * FROM P1C_GET_FUELS_REST_V2");
     for(int i = 0, j = 0; i < model->columnCount(); i++, j++){
         model->setHeaderData(i,Qt::Horizontal,headers[j]);
     }
@@ -81,7 +81,7 @@ void MainWindow::createModel()
 
 void MainWindow::on_pushButton_clicked()
 {
-    model->setQuery("SELECT * FROM P1C_GET_FUELS_REST");
+    model->setQuery("SELECT * FROM P1C_GET_FUELS_REST_V2");
     ui->labelInfo->setText("Последнее обновение: "+QDateTime::currentDateTime().toString("dd.MM.yyyy hh:mm:ss"));
 }
 
@@ -253,7 +253,11 @@ void MainWindow::on_toolButtonExcel_clicked()
     QString fn = QDir::currentPath() + "//" + "Tanks"+QDateTime::currentDateTime().toString("yyyyMMddhhmm")+".xlsx";
     xlsx.saveAs(fn); // save the document as 'Test.xlsx'
     qInfo (logInfo()) << "Path xls" << fn;
+#ifdef Q_OS_WIN
     QDesktopServices::openUrl(QUrl("file:///"+fn, QUrl::TolerantMode));
+#else
+    QDesktopServices::openUrl(QUrl("file://"+fn, QUrl::TolerantMode));
+#endif
 
 
 
